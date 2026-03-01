@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Space Invaders - Even G2 Edition</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Prevent iOS zoom on double-tap -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Space Invaders - Even G2 Edition</h1>
+    <div class="status" id="statusText">Simulator Mode</div>
+  </div>
+
+  <!-- Game Display -->
+  <div class="display-frame">
+    <canvas id="gameCanvas" width="576" height="288"></canvas>
+  </div>
+
+  <!-- Keyboard Controls Legend -->
+  <div class="controls">
+    <div class="section-title">Keyboard Controls</div>
+    <kbd>&larr;</kbd> <kbd>&rarr;</kbd> Move
+    &nbsp;&bull;&nbsp;
+    <kbd>Space</kbd> Fire
+    &nbsp;&bull;&nbsp;
+    <kbd>P</kbd> Pause
+    &nbsp;&bull;&nbsp;
+    <kbd>F</kbd> Fullscreen
+
+    <div class="section-title">G2 Glasses Controls</div>
+    Swipe temple: Move &bull; Tap: Fire &bull; Double-tap: Pause &bull; R1 Ring: Scroll + Press
+  </div>
+
+  <!-- Mobile Touch Controls -->
+  <div class="touch-controls" id="touchControls">
+    <div class="touch-move">
+      <button class="touch-btn" id="btnLeft">&larr;</button>
+      <button class="touch-btn" id="btnRight">&rarr;</button>
+    </div>
+    <button class="touch-btn fire" id="btnFire">FIRE</button>
+  </div>
+
+  <!-- Game Scripts -->
+  <script src="js/game.js"></script>
+  <script src="js/g2-bridge.js"></script>
+  <script>
+    // =========================================================================
+    // Initialization
+    // =========================================================================
+
+    (function() {
+      'use strict';
+
+      const canvas = document.getElementById('gameCanvas');
+      const statusEl = document.getElementById('statusText');
+
+      // Create game instance
+      const game = new SpaceInvadersGame(canvas);
+
+      // Try to connect to G2 glasses
+      const bridge = new G2Bridge(game);
+
+      async function init() {
+        const g2Connected = await bridge.init();
+
+        if (g2Connected) {
+          statusEl.textContent = 'Connected to Even G2';
+          statusEl.classList.add('connected');
+          bridge.startFrameLoop();
+        } else {
+          statusEl.textContent = 'Simulator Mode - Play in browser';
+        }
+
+        // Start the game loop
+        game.start();
+      }
+
+      // --- Touch controls for mobile simulator ---
+      function setupTouchControls() {
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnFire = document.getElementById('btnFire');
+
+        function addTouchHandler(btn, keyCode) {
+          btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            game.sound.init();
+            game.keys[keyCode] = true;
+            if (game.state === 'title' || game.state === 'gameover') {
+              game.sound.init();
+              game._startGame();
+            }
+          });
+          btn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            game.keys[keyCode] = false;
+          });
+          btn.addEventListener('touchcancel', (e) => {
+            game.keys[keyCode] = false;
+          });
+          // Also handle mouse for desktop testing
+          btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            game.sound.init();
+            game.keys[keyCode] = true;
+            if (game.state === 'title' || game.state === 'gameover') {
+              game._startGame();
+            }
+          });
+          btn.addEventListener('mouseup', (e) => {
+            game.keys[keyCode] = false;
+          });
+        }
+
+        addTouchHandler(btnLeft, 'ArrowLeft');
+        addTouchHandler(btnRight, 'ArrowRight');
+        addTouchHandler(btnFire, 'Space');
+      }
+
+      // --- Fullscreen toggle ---
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyF') {
+          document.body.classList.toggle('fullscreen');
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else {
+            document.documentElement.requestFullscreen().catch(() => {});
+          }
+        }
+      });
+
+      // --- Prevent default touch behaviors ---
+      canvas.addEventListener('touchstart', (e) => e.preventDefault());
+      canvas.addEventListener('touchmove', (e) => e.preventDefault());
+
+      // --- Cleanup on page unload ---
+      window.addEventListener('beforeunload', () => {
+        bridge.destroy();
+      });
+
+      // --- Start ---
+      setupTouchControls();
+      init();
+
+    })();
+  </script>
+
+</body>
+</html>

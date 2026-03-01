@@ -1,0 +1,249 @@
+/* =========================================================================
+   Space Invaders for Even Realities G2 - Simulator Styling
+   ========================================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a0a;
+  color: #00ff41;
+  font-family: 'Courier New', 'Monaco', monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* -- Header ------------------------------------------------------------ */
+
+.header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.header h1 {
+  font-size: 14px;
+  font-weight: normal;
+  color: #00cc33;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.header .status {
+  font-size: 11px;
+  color: #006622;
+  margin-top: 4px;
+}
+
+.header .status.connected {
+  color: #00ff41;
+}
+
+/* -- Display Frame (simulates G2 lens shape) --------------------------- */
+
+.display-frame {
+  position: relative;
+  border: 2px solid #003311;
+  border-radius: 20px;
+  padding: 8px;
+  background: #000;
+  box-shadow:
+    0 0 20px rgba(0, 255, 65, 0.05),
+    inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.display-frame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #003311;
+  border-radius: 0 0 3px 3px;
+}
+
+/* Scanline effect */
+.display-frame::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 65, 0.015) 2px,
+    rgba(0, 255, 65, 0.015) 4px
+  );
+  pointer-events: none;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+/* -- Canvas ------------------------------------------------------------ */
+
+#gameCanvas {
+  display: block;
+  border-radius: 12px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  width: 576px;
+  height: 288px;
+}
+
+/* Scale up for larger screens */
+@media (min-width: 1200px) {
+  #gameCanvas {
+    width: 864px;
+    height: 432px;
+  }
+}
+
+@media (min-width: 1600px) {
+  #gameCanvas {
+    width: 1152px;
+    height: 576px;
+  }
+}
+
+/* -- Controls Legend ---------------------------------------------------- */
+
+.controls {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 11px;
+  color: #006622;
+  line-height: 1.8;
+}
+
+.controls .section-title {
+  color: #00aa33;
+  font-size: 12px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
+.controls kbd {
+  display: inline-block;
+  background: #001a0a;
+  border: 1px solid #003311;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 11px;
+  color: #00cc33;
+  margin: 0 2px;
+}
+
+/* -- Touch Controls (mobile/tablet) ------------------------------------ */
+
+.touch-controls {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+.touch-btn {
+  width: 70px;
+  height: 70px;
+  border: 2px solid #003311;
+  border-radius: 50%;
+  background: rgba(0, 20, 10, 0.8);
+  color: #00cc33;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.touch-btn:active {
+  background: rgba(0, 60, 20, 0.9);
+  border-color: #00ff41;
+}
+
+.touch-btn.fire {
+  width: 80px;
+  height: 80px;
+  border-color: #00aa33;
+}
+
+.touch-move {
+  display: flex;
+  gap: 20px;
+}
+
+/* Show touch controls on touch devices */
+@media (pointer: coarse) {
+  .touch-controls {
+    display: flex;
+  }
+
+  .controls {
+    display: none;
+  }
+
+  #gameCanvas {
+    width: 100vw;
+    height: calc(100vw * 0.5);
+    max-width: 576px;
+    max-height: 288px;
+  }
+
+  .display-frame {
+    border-radius: 8px;
+    padding: 4px;
+  }
+}
+
+/* -- Fullscreen -------------------------------------------------------- */
+
+body.fullscreen .header,
+body.fullscreen .controls {
+  display: none;
+}
+
+body.fullscreen .display-frame {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+body.fullscreen #gameCanvas {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+/* -- Subtle CRT glow -------------------------------------------------- */
+
+@keyframes flicker {
+  0% { opacity: 0.97; }
+  50% { opacity: 1; }
+  100% { opacity: 0.98; }
+}
+
+.display-frame {
+  animation: flicker 0.15s infinite;
+}
