@@ -2,6 +2,22 @@
 
 A classic Space Invaders game built for the **Even Realities G2** smart glasses. Playable both on the G2 glasses and in any web browser as a simulator.
 
+## Play Now
+
+**Scan the QR code or click the link to play instantly:**
+
+<p align="center">
+  <a href="https://comm4nd0.github.io/Even-G2-Space-Invaders/">
+    <img src="qrcode.png" alt="QR Code - Scan to Play" width="250">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://comm4nd0.github.io/Even-G2-Space-Invaders/">
+    <strong>https://comm4nd0.github.io/Even-G2-Space-Invaders/</strong>
+  </a>
+</p>
+
 ## Quick Start
 
 ### Browser Simulator
@@ -16,8 +32,8 @@ python3 -m http.server 8080
 
 ### Even G2 Glasses
 
-1. Host the project on a web server (Vercel, Cloudflare Pages, any HTTPS host)
-2. Register the app URL in the [Even Hub developer portal](https://evenhub.evenrealities.com/)
+1. The game is hosted via GitHub Pages at the link above
+2. Register the URL in the [Even Hub developer portal](https://evenhub.evenrealities.com/)
 3. Open the app through the Even App on your iPhone
 4. The game automatically detects the G2 glasses and sends frames via EvenAppBridge
 
@@ -57,13 +73,23 @@ The game is designed around the G2's display characteristics:
 - **Color**: Monochrome green micro-LED, 4-bit greyscale (16 shades)
 - **Rendering**: Game frames are rendered to an offscreen canvas, converted to greyscale, and sent to the glasses via `updateImageRawData()`
 
+## GitHub Pages Hosting
+
+This game is deployed automatically via GitHub Actions. To enable it on your own fork:
+
+1. Go to **Settings** > **Pages** in your GitHub repo
+2. Under **Source**, select **GitHub Actions**
+3. Push to the `main` or `claude/space-invaders-g2-game-5vdyp` branch — the workflow deploys automatically
+
 ## Project Structure
 
 ```
-index.html          Entry point
-css/style.css       Simulator styling (CRT/HUD aesthetic)
-js/game.js          Game engine — sprites, entities, physics, rendering
-js/g2-bridge.js     Even G2 glasses integration via EvenAppBridge
+index.html                      Entry point
+css/style.css                   Simulator styling (CRT/HUD aesthetic)
+js/game.js                      Game engine — sprites, entities, physics, rendering
+js/g2-bridge.js                 Even G2 glasses integration via EvenAppBridge
+.github/workflows/deploy.yml    GitHub Pages deployment workflow
+qrcode.png                      QR code linking to live game
 ```
 
 ## Scoring
